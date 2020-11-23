@@ -12,20 +12,35 @@
 <script>
   import { ebookMixin } from '../../utils/mixin'
   import Epub from 'epubjs'
-import { getFontFamily, saveFontFamily, saveFontSize, getFontSize } from '../../utils/localStorage'
+  import {
+    getFontFamily,
+    saveFontFamily,
+    saveFontSize,
+    getFontSize,
+    getTheme,
+    saveTheme,
+    getLocation
+  } from '../../utils/localStorage'
 
   global.ePub = Epub
   export default {
     mixins: [ebookMixin],
     methods: {
       initEpub() {
-        const url = 'http://192.168.0.196:8081/epub/' + this.fileName + '.epub'
+        const url = process.env.VUE_APP_RES_URL + '/epub/' + this.fileName + '.epub'
         console.log('url:::', url)
         this.book = new Epub(url)
         console.log('Book: ', this.book)
         this.setCurrentBook(this.book)
         this.initRendition()
-        // this.setBookAvailable(true)
+        this.initGesture()
+        this.book.ready.then(() => {
+          return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16))
+        }).then(locations => {
+          console.log('locations', locations)
+          this.setBookAvailable(true)
+          this.refreshLocation()
+        })
       },
       initFontSize() {
         let fontSize = getFontSize(this.fileName)
@@ -45,16 +60,7 @@ import { getFontFamily, saveFontFamily, saveFontSize, getFontSize } from '../../
           this.setDefaultFontFamily(font)
         }
       },
-      initRendition() {
-        this.rendition = this.book.renderTo('read', {
-          width: innerWidth,
-          height: innerHeight,
-          method: 'default'
-        })
-        this.rendition.display().then(() => {
-          this.initFontSize()
-          this.initFontFamily()
-        })
+      initGesture() {
         this.rendition.on('touchstart', event => {
           console.log(event)
           this.touchStartX = event.changedTouches[0].clientX
@@ -75,6 +81,40 @@ import { getFontFamily, saveFontFamily, saveFontSize, getFontSize } from '../../
           event.preventDefault()
           event.stopPropagation()
         })
+      },
+      initTheme() {
+        let defaultTheme = getTheme(this.fileName)
+        if (!defaultTheme) {
+          defaultTheme = this.themeList[0].name
+          saveTheme(this.fileName, defaultTheme)
+        }
+        this.setDefaultTheme(defaultTheme)
+        this.themeList.forEach(theme => {
+          this.rendition.themes.register(theme.name, theme.style)
+        })
+        this.rendition.themes.select(defaultTheme)
+      },
+      initRendition() {
+        this.rendition = this.book.renderTo('read', {
+          width: innerWidth,
+          height: innerHeight,
+          method: 'default'
+        })
+        // this.rendition.display().then(() => {
+        //   this.initTheme()
+        //   this.initFontSize()
+        //   this.initFontFamily()
+        //   this.initGlobalStyle()
+        //   this.refreshLocation()
+        // })
+        const location = getLocation(this.fileName)
+        this.display(location, () => {
+          this.initTheme()
+          this.initFontSize()
+          this.initFontFamily()
+          this.initGlobalStyle()
+        })
+
         this.rendition.hooks.content.register(contents => {
           Promise.all([
             contents.addStylesheet(`${process.env.VUE_APP_RES_URL}/fonts/daysOne.css`),
@@ -90,13 +130,17 @@ import { getFontFamily, saveFontFamily, saveFontSize, getFontSize } from '../../
       },
       prevPage() {
         if (this.rendition) {
-          this.rendition.prev()
+          this.rendition.prev().then(() => {
+            this.refreshLocation()
+          })
           this.hideTitleAndMenu()
         }
       },
       nextPage() {
         if (this.rendition) {
-          this.rendition.next()
+          this.rendition.next().then(() => {
+            this.refreshLocation()
+          })
           this.hideTitleAndMenu()
         }
       },

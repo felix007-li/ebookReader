@@ -1,4 +1,5 @@
 import { realPx } from './utils'
+import { getReadTime } from './localStorage'
 
 export const FONT_SIZE_LIST = [
   { fontSize: 12 },
@@ -69,4 +70,38 @@ export function themeList(vue) {
       }
     }
   ]
+}
+
+export function addCss(href) {
+  const link = document.createElement('link')
+  link.setAttribute('rel', 'stylesheet')
+  link.setAttribute('type', 'text/css')
+  link.setAttribute('href', href)
+  document.getElementsByTagName('head')[0].appendChild(link)
+}
+
+export function removeCss(href) {
+  const links = document.getElementsByTagName('link')
+  console.log('link', links)
+  links.forEach(link => {
+    if (link && link.getAttribute('href') && link.getAttribute('href') === href) {
+      link.parentNode.removeChild(link)
+    }
+  })
+}
+
+export function removeAllCss() {
+  removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_default.css`)
+  removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_eye.css`)
+  removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_gold.css`)
+  removeCss(`${process.env.VUE_APP_RES_URL}/theme/theme_night.css`)
+}
+
+export function getReadTimeByMinute(fileName) {
+  const readTime = getReadTime(fileName)
+  if (!readTime) {
+    return 0
+  } else {
+    return Math.ceil(readTime / 60)
+  }
 }

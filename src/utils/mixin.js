@@ -1,4 +1,6 @@
 import { mapGetters, mapActions } from 'vuex'
+import { themeList, addCss, removeAllCss, getReadTimeByMinute } from './book'
+import { getBookmark, saveLocation, getBookShelf, saveBookShelf } from './localStorage'
 
 export const ebookMixin = {
   computed: {
@@ -22,7 +24,13 @@ export const ebookMixin = {
       'pagelist',
       'offsetY',
       'isBookmark'
-    ])
+    ]),
+    themeList() {
+      return themeList(this)
+    },
+    getSectionName() {
+      return this.section ? this.navigation[this.section].label : ''
+    }
   },
   methods: {
     ...mapActions([
@@ -45,6 +53,80 @@ export const ebookMixin = {
       'setPagelist',
       'setOffsetY',
       'setIsBookmark'
-    ])
+    ]),
+    initGlobalStyle() {
+      removeAllCss()
+      switch (this.defaultTheme) {
+        case 'Default':
+          addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_default.css`)
+          break
+        case 'Eye':
+          addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_eye.css`)
+          break
+        case 'Gold':
+          addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_gold.css`)
+          break
+        case 'Night':
+          addCss(`${process.env.VUE_APP_RES_URL}/theme/theme_night.css`)
+          break
+      }
+    },
+    display(target, cb) {
+      if (target) {
+        this.currentBook.rendition.display(target).then(() => {
+          this.refreshLocation()
+          if (cb) cb()
+        })
+      } else {
+        this.currentBook.rendition.display().then(() => {
+          this.refreshLocation()
+          if (cb) cb()
+        })
+      }
+    },
+    refreshLocation() {
+      console.log('222')
+      const currentLocation = this.currentBook.rendition.currentLocation()
+      console.log('currentLocation::', currentLocation)
+      const startCfi = currentLocation.start.cfi
+      const progress = this.currentBook.locations.percentageFromCfi(startCfi)
+      this.setProgress(Math.floor(progress * 100))
+      this.setSection(currentLocation.start.index)
+      saveLocation(this.fileName, startCfi)
+    },
+    // refreshLocation() {
+    //   const currentLocation = this.currentBook.rendition.currentLocation()
+    //   if (currentLocation && currentLocation.start) {
+    //     const startCfi = currentLocation.start.cfi
+    //     const progress = this.currentBook.locations.percentageFromCfi(startCfi)
+    //     this.setProgress(Math.floor(progress * 100))
+    //     this.setSection(currentLocation.start.index)
+    //     saveLocation(this.fileName, startCfi)
+    //     const bookmark = getBookmark(this.fileName)
+    //     if (bookmark) {
+    //       if (bookmark.some(item => item.cfi === startCfi)) {
+    //         this.setIsBookmark(true)
+    //       } else {
+    //         this.setIsBookmark(false)
+    //       }
+    //     } else {
+    //       this.setIsBookmark(false)
+    //     }
+    //     if (this.pagelist) {
+    //       const totalPage = this.pagelist.length
+    //       const currentPage = currentLocation.start.location
+    //       if (currentPage && currentPage > 0) {
+    //         this.setPaginate(currentPage + ' / ' + totalPage)
+    //       } else {
+    //         this.setPaginate('')
+    //       }
+    //     } else {
+    //       this.setPaginate('')
+    //     }
+    //   }
+    // },
+    getReadTimeText() {
+      return this.$t('book.haveRead').replace('$1', getReadTimeByMinute(this.fileName))
+    }
   }
 }

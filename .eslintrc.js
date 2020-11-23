@@ -18,6 +18,9 @@ module.exports = {
     'no-trailing-spaces': 'off',
     'no-unused-vars': 'off',
     'prefer-const': 'off',
-    'quote-props': 'off'
+    'quote-props': 'off',
+    'padded-blocks': 'off',
+    'quotes': 'off',
+    'no-multiple-empty-lines': 'off'
   }
 }
