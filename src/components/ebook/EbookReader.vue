@@ -21,6 +21,7 @@
     saveTheme,
     getLocation
   } from '../../utils/localStorage'
+  import { flatten } from '../../utils/book'
 
   global.ePub = Epub
   export default {
@@ -34,6 +35,7 @@
         this.setCurrentBook(this.book)
         this.initRendition()
         this.initGesture()
+        this.parseBook()
         this.book.ready.then(() => {
           return this.book.locations.generate(750 * (window.innerWidth / 375) * (getFontSize(this.fileName) / 16))
         }).then(locations => {
@@ -152,11 +154,31 @@
         }
         this.setMenuVisible(!this.menuVisible)
       },
-      hideTitleAndMenu() {
-        // this.$store.dispatch('setMenuVisible', false)
-        this.setMenuVisible(false)
-        this.setSettingVisible(-1)
-        this.setFontFamilyVisible(false)
+      parseBook() {
+        this.book.loaded.cover.then(cover => {
+          console.log('cover::', cover)
+          this.book.archive.createUrl(cover).then(url => {
+            console.log('cover url::', url)
+            this.setCover(url)
+          })
+          this.book.loaded.metadata.then(metadata => {
+            this.setMetadata(metadata)
+          })
+          this.book.loaded.navigation.then(nav => {
+            console.log('catalog tree:::', nav.toc)
+            const navItem = flatten(nav.toc)
+            console.log('become one level catalog tree:::', navItem)
+            function find(item, level = 0) {
+              return !item.parent ? level : find(navItem.filter(parentItem => parentItem.id === item.parent)[0], ++level)
+            }
+
+            navItem.forEach(item => {
+              item.level = find(item)
+            })
+            console.log('finished one level catalog::', navItem)
+            this.setNavigation(navItem)
+          })
+        })
       }
     },
     mounted() {
