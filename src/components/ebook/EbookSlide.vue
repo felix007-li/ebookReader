@@ -5,7 +5,7 @@
         <div class="content" v-if="settingVisible === 3">
           <div class="content-page-wrapper" v-if="bookAvailable">
             <div class="content-page">
-              <component :is="currentTab === 1 ? content : ''"></component>
+              <component :is="currentTab === 1 ? content : bookmark"></component>
             </div>
             <div class="content-page-tab">
               <div class="content-page-tab-item"
@@ -21,7 +21,7 @@
             </div>
           </div>
           <div class="content-empty" v-else>
-            <!-- <ebook-loading></ebook-loading> -->
+            <ebook-loading></ebook-loading>
           </div>
         </div>
       </transition>
@@ -33,19 +33,19 @@
 <script>
   import { ebookMixin } from '../../utils/mixin'
   import EbookSlideContents from './EbookSlideContents'
-  // import EbookSlideBookmark from './EbookSlideBookmark'
-  // import EbookLoading from './EbookLoading'
+  import EbookSlideBookmark from './EbookSlideBookmark'
+  import EbookLoading from './EbookLoading'
 
   export default {
     mixins: [ebookMixin],
     components: {
-      // EbookLoading
+      EbookLoading
     },
     data() {
       return {
         currentTab: 1,
-        content: EbookSlideContents
-        // bookmark: EbookSlideBookmark
+        content: EbookSlideContents,
+        bookmark: EbookSlideBookmark
       }
     },
     methods: {

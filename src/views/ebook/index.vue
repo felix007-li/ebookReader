@@ -1,26 +1,45 @@
 <template>
-  <div class="ebook">
+  <div class="ebook" ref="ebook">
+    <ebook-header></ebook-header>
     <ebook-title></ebook-title>
     <ebook-reader></ebook-reader>
     <ebook-menu></ebook-menu>
+    <ebook-bookmark></ebook-bookmark>
+    <ebook-footer></ebook-footer>
   </div>
 </template>
 
 <script>
+  import EbookFooter from '../../components/ebook/EbookFooter'
   import EbookReader from '../../components/ebook/EbookReader'
   import EbookTitle from '../../components/ebook/EbookTitle'
   import EbookMenu from '../../components/ebook/EbookMenu'
+  import EbookBookmark from '../../components/ebook/EbookBookmark'
   import { getReadTime, saveReadTime } from '../../utils/localStorage'
   import { ebookMixin } from '../../utils/mixin'
+  import EbookHeader from '../../components/ebook/EbookHeader.vue'
 
   export default {
     mixins: [ebookMixin],
     components: {
       EbookReader,
       EbookTitle,
-      EbookMenu
+      EbookMenu,
+      EbookBookmark,
+      EbookHeader,
+      EbookFooter
     },
     methods: {
+      restore() {
+        this.$refs.ebook.style.top = 0
+        this.$refs.ebook.style.transition = 'all .2s linear'
+        setTimeout(() => {
+          this.$refs.ebook.style.transition = ''
+        }, 200)
+      },
+      move(v) {
+        this.$refs.ebook.style.top = v + 'px'
+      },
       startLoopReadTime() {
         let readTime = getReadTime(this.fileName)
         if (!readTime) {

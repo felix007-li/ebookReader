@@ -85,6 +85,7 @@
         if (this.searchText && this.searchText.length > 0) {
           this.doSearch(this.searchText).then(list => {
             this.searchList = list
+            console.log('search list::', this.searchList)
             this.searchList.map(item => {
               item.excerpt = item.excerpt.replace(this.searchText, `<span class="content-search-text">${this.searchText}</span>`)
               return item
@@ -187,7 +188,7 @@
         padding: 0 px2rem(10);
         box-sizing: border-box;
         .slide-contents-book-title {
-          // width: px2rem(153.75);
+          // width: px2rem(153.75); // 全屏是，153.75的宽度太小，用flex解决
           font-size: px2rem(14);
           line-height: px2rem(16);
           @include left;
