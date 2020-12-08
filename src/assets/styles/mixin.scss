@@ -1,4 +1,5 @@
-$animationTime: .2s;
+$animationTime: .3s;
+$animationType: linear;
 $ratio: 375 /10;
 
 @function px2rem($px) {
@@ -54,3 +55,45 @@ $ratio: 375 /10;
       display: none;
     }
 }
+
+@mixin columnLeft {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: left;
+}
+
+@mixin columnTop {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+}  
+
+@mixin columnCenter {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+@mixin absCenter {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    margin: auto;
+}
+
+.icon {
+    color: #666;
+    font-size: px2rem(16);
+}
+  
+.title {
+    color: #666;
+    font-size: px2rem(16);
+    font-weight: bold;
+}
+  

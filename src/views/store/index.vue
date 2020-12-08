@@ -1,3 +1,4 @@
+<!-- 书城页面入口文件 -->
 <template>
   <div class="store">
     <router-view></router-view>
