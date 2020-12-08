@@ -25,6 +25,7 @@ export function home() {
 export function detail(book) {
   return axios({
     method: 'get',
+    // VUE_APP_BOOK_URL：线上URL地址
     url: `${process.env.VUE_APP_BOOK_URL}/book/detail`,
     params: {
       fileName: book.fileName
