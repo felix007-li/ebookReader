@@ -21,7 +21,7 @@
     <ebook-setting-font-popup></ebook-setting-font-popup>
     <ebook-setting-theme></ebook-setting-theme>
     <ebook-setting-progess></ebook-setting-progess>
-    <!-- <ebook-setting-progress></ebook-setting-progress> -->
+    <ebook-setting-progress></ebook-setting-progress>
     <ebook-slide></ebook-slide>
   </div>
 </template>
