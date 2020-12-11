@@ -45,9 +45,9 @@
     watch: {
       offsetY(offsetY) {
         if (offsetY > 0 && this.ifInputClicked) {
-          this.ifHideShadow = false // 显示阴影
+          this.ifHideShadow = false
         } else {
-          this.ifHideShadow = true // 隐藏阴影
+          this.ifHideShadow = true
         }
       }
     },

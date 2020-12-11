@@ -53,7 +53,7 @@
     width: 100%;
     overflow-x: hidden;
     overflow-y: scroll;
-    -webkit-overflow-scrolling: touch; //解决移动端卡顿问题
+    -webkit-overflow-scrolling: touch;
     &::-webkit-scrollbar {
       display: none;
     }

@@ -2,7 +2,6 @@
   <div class="ebook-reader">
     <!-- {{$route.params.fileName}} -->
     <div id="read"></div>
-    <!-- mousedown： Vue2.0新属性，点击左键才触发 -->
     <div class="ebook-reader-mask"
          @click="onMaskClick"
          @touchmove="move"
