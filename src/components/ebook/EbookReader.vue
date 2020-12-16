@@ -26,13 +26,13 @@
     getLocation
   } from '../../utils/localStorage'
   import { flatten } from '../../utils/book'
+  import { getLocalForage } from '../../utils/localForage'
 
   global.ePub = Epub
   export default {
     mixins: [ebookMixin],
     methods: {
-      initEpub() {
-        const url = process.env.VUE_APP_RES_URL + '/epub/' + this.fileName + '.epub'
+      initEpub(url) {
         console.log('url:::', url)
         this.book = new Epub(url)
         console.log('Book: ', this.book)
@@ -282,7 +282,8 @@
         const fileName = this.$route.params.fileName.split('|').join('/')
         console.log(fileName)
         this.setFileName(fileName).then(() => {
-          this.initEpub()
+          const url = process.env.VUE_APP_RES_URL + '/epub/' + this.fileName + '.epub'
+          this.initEpub(url)
         })
         // const books = this.$route.params.fileName.split('|')
         // // const fileName = books[1]

@@ -21,6 +21,7 @@ module.exports = {
     'quote-props': 'off',
     'padded-blocks': 'off',
     'quotes': 'off',
-    'no-multiple-empty-lines': 'off'
+    'no-multiple-empty-lines': 'off',
+    'vue/no-use-v-if-with-v-for': 'off'
   }
 }
